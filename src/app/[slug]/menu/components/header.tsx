@@ -5,7 +5,7 @@ import { ChevronLeftIcon, ScrollTextIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import { Button } from "./ui/button";
+import { Button } from "../../../../components/ui/button";
 
 interface RestaurantHeaderProps {
   restaurant: Pick<Restaurant, "coverImageUrl" | "name">;

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import ConsumptionMethodOption from "@/components/consumption-method-option";
+import ConsumptionMethodOption from "@/app/[slug]/components/consumption-method-option";
 import { getRestaurantBySlug } from "@/data/get-restaurant-by-slug";
 
 interface RestaurantPageProps {
