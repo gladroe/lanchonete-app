@@ -19,7 +19,7 @@ const CartSheet = () => {
                 </SheetHeader>
                 {products.map((product) => (
                     <div key={product.id}>
-                        <p>{product.name}</p>
+                        <h1>{product.name}</h1>
                         <p>{product.price}</p>
                         <p>{product.quantity}</p>                      
                     </div>
