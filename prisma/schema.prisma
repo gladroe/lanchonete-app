@@ -53,8 +53,6 @@ model Product {
   updatedAt      DateTime       @updatedAt
 }
 
-
-
 model Order {
   id                Int               @id @default(autoincrement())
   total             Float
