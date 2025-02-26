@@ -13,7 +13,7 @@ interface CartItemProps {
  }
 
 const CartProductItem = ({ product }: CartItemProps) => {
-    const { decreaseProductQuantity, increaseProductQuantity } = useContext(CartContext);
+    const { decreaseProductQuantity, increaseProductQuantity, removeProduct } = useContext(CartContext);
 
 
     return ( 
@@ -42,7 +42,7 @@ const CartProductItem = ({ product }: CartItemProps) => {
                 </div>
             </div>
             {/* BOTÃO DE DELETAR */}
-            <Button className="w-7 h-7 rounded-lg" variant="outline">
+            <Button className="w-7 h-7 rounded-lg" variant="outline" onClick={() => removeProduct(product.id)}>
                 <TrashIcon />
             </Button>
         </div>
