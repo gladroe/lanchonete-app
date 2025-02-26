@@ -83,7 +83,7 @@ const OrderList = ({ orders }: OrderListProps) => {
                                         <div className="h-5 w-5 flex items-center justify-center rounded-full bg-gray-400 text-white text-xs font-semibold">
                                             {orderProduct.quantity}
                                         </div>
-                                            <p className="text-sm max-w-[90%] truncate text-ellipsis">{orderProduct.product.name}</p>
+                                            <p className="text-sm max-w-[%] truncate text-ellipsis">{orderProduct.product.name}</p>
                                      </div>
                                      <div className="font-medium">
                                         <p>{formatCurrency(orderProduct.product.price)}</p>
