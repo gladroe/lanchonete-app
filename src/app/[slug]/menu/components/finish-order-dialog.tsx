@@ -144,7 +144,7 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
                   className="rounded-full"
                   disabled={isPending}
                 >
-                  {isPending && <Loader2Icon  className="mr-2 animate-spin" />}
+                  {isPending && <Loader2Icon  className="animate-spin" />}
                   Finalizar
                 </Button>
                 <DrawerClose asChild>
