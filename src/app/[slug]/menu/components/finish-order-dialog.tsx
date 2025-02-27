@@ -1,13 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { ConsumptionMethod } from "@prisma/client";
+import { ConsumptionMethod } from "@prisma/client";
+import { loadStripe } from "@stripe/stripe-js";
 import { Loader2Icon } from "lucide-react";
 import { useParams, useSearchParams } from "next/navigation";
-import { useContext, useTransition } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
-import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -33,20 +33,21 @@ import { Input } from "@/components/ui/input";
 import { isValidCpf } from "@/helpers/cpf";
 
 import { createOrder } from "../actions/create-order";
+import { createStripeCheckout } from "../actions/create-stripe-checkout";
 import { CartContext } from "../contexts/cart";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, {
-    message: "O nome é obrigatório",
+    message: "O nome é obrigatório.",
   }),
   cpf: z
     .string()
     .trim()
     .min(1, {
-      message: "O CPF é obrigatório",
+      message: "O CPF é obrigatório.",
     })
     .refine((value) => isValidCpf(value), {
-      message: "O CPF é inválido",
+      message: "O CPF é inválido.",
     }),
 });
 
@@ -58,10 +59,10 @@ interface FinishOrderDialogProps {
 }
 
 const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
-  const searchParams = useSearchParams();
-  const { products } = useContext(CartContext);
   const { slug } = useParams<{ slug: string }>();
-  const [ isPending, startTransition] = useTransition();
+  const { products } = useContext(CartContext);
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -73,22 +74,39 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
 
   const onSubmit = async (data: FormSchema) => {
     try {
+      setIsLoading(true);
       const consumptionMethod = searchParams.get(
         "consumptionMethod",
       ) as ConsumptionMethod;
-      startTransition( async () => {
-        await createOrder({
-          consumptionMethod,
-          customerName: data.name,
-          customerCPF: data.cpf,
-          products,
-          slug,
-        });
-        onOpenChange(false);
-        toast.success("Pedido finalizado com sucesso!");
+
+      const order = await createOrder({
+        consumptionMethod,
+        customerCPF: data.cpf,
+        customerName: data.name,
+        products,
+        slug,
+      });
+
+      const { sessionId } = await createStripeCheckout({
+        products,
+        orderId: order.id,
+        slug,
+        consumptionMethod,
+        cpf: data.cpf,
+      });
+      if (!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY) return;
+
+      const stripe = await loadStripe(
+        process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY,
+      );
+
+      stripe?.redirectToCheckout({
+        sessionId: sessionId,
       });
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -105,7 +123,7 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
 
         <div className="p-5">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
                 name="name"
@@ -142,9 +160,9 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
                   type="submit"
                   variant="destructive"
                   className="rounded-full"
-                  disabled={isPending}
+                  disabled={isLoading}
                 >
-                  {isPending && <Loader2Icon  className="animate-spin" />}
+                  {isLoading && <Loader2Icon className="animate-spin" />}
                   Finalizar
                 </Button>
                 <DrawerClose asChild>
