@@ -55,7 +55,7 @@ const OrderList = ({ orders }: OrderListProps) => {
                     <CardContent className="p-5 space-y-4">
                         <div className={`w-fit rounded-full px-2 py-1 text-xs font-semibold text-white
                             ${order.status === OrderStatus.PENDING ? "bg-amber-500 text-gray-100" : "bg-gray-200 text-gray-500"}
-                            ${order.status === OrderStatus.CONFIRMED ? "bg-green-500 text-gray-100" : "bg-gray-200 text-gray-500"}
+                            ${order.status === OrderStatus.CONFIRMED ? "bg-teal-500 text-gray-100" : "bg-gray-200 text-gray-500"}
                             ${order.status === OrderStatus.CANCELED ? "bg-red-500 text-gray-100" : "bg-gray-200 text-gray-500"}
                             ${order.status === OrderStatus.IN_PREPARATION ? "bg-orange-500 text-gray-100" : "bg-gray-200 text-gray-500"}
                             ${order.status === OrderStatus.IN_DELIVERY ? "bg-purple-500 text-gray-100" : "bg-gray-200 text-gray-500"}
