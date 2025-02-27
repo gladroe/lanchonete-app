@@ -87,6 +87,8 @@ enum OrderStatus {
   IN_DELIVERY
   DELIVERED
   FINISHED
+  PAYMENT_CONFIRMED
+  PAYMENT_FAILED
 }
 
 enum ConsumptionMethod {
